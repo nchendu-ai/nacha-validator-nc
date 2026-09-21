@@ -6,10 +6,10 @@ import {
 	achSemanticTokenLegend
 } from './language/semanticTokensProvider';
 
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext): void {
 
-	const disposable = vscode.commands.registerCommand(
-		'ach-nacha-validator-nc.helloWorld',
+	const validateFileCommand = vscode.commands.registerCommand(
+		'nacha-validator-nc.validateFile',
 		() => validateNachaCommand(context)
 	);
 
@@ -27,10 +27,10 @@ export function activate(context: vscode.ExtensionContext) {
 		);
 
 	context.subscriptions.push(
-		disposable,
+		validateFileCommand,
 		hoverProvider,
 		semanticTokensProvider
 	);
 }
 
-export function deactivate() {}
+export function deactivate(): void {}
