@@ -9,7 +9,7 @@ import {
 export function activate(context: vscode.ExtensionContext) {
 
 	const disposable = vscode.commands.registerCommand(
-		'nacha-validator-nc.helloWorld',
+		'ach-nacha-validator-nc.helloWorld',
 		() => validateNachaCommand(context)
 	);
 

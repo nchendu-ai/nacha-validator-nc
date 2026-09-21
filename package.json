@@ -1,5 +1,5 @@
 {
-	"name": "nacha-validator-nc",
+	"name": "ach-nacha-validator-nc",
 	"displayName": "NACHA Validator",
 	"publisher": "NChenduSoftware",
 	"description": "Powerful NACHA file validation for Visual Studio Code. Validate NACHA file structure and record lengths, with clear, descriptive error messages that help you quickly identify and fix invalid records.",
@@ -15,7 +15,7 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "nacha-validator-nc.helloWorld",
+				"command": "ach-nacha-validator-nc.helloWorld",
 				"title": "NACHA Validator: Validate NACHA File"
 			}
 		],
