@@ -127,6 +127,65 @@ body {
 	margin: 28px 0 12px 0;
 }
 
+h2 {
+	font-size: 18px;
+	margin: 30px 0 12px;
+}
+
+.batch {
+	margin-top: 24px;
+	border: 1px solid var(--vscode-panel-border);
+	border-radius: 8px;
+}
+
+.batch summary {
+	padding: 14px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.batch-content {
+	padding: 0 14px 14px;
+}
+
+.metadata {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	gap: 6px 16px;
+	margin: 0;
+}
+
+.metadata dt {
+	color: var(--vscode-descriptionForeground);
+}
+
+.metadata dd {
+	margin: 0;
+}
+
+.pass {
+	background: rgba(46, 160, 67, 0.15);
+	color: var(--vscode-testing-iconPassed);
+}
+
+.fail {
+	background: rgba(214, 54, 56, 0.15);
+	color: var(--vscode-testing-iconFailed);
+}
+
+.warning {
+	background: rgba(204, 144, 0, 0.18);
+	color: var(--vscode-editorWarning-foreground);
+}
+
+.muted {
+	color: var(--vscode-descriptionForeground);
+}
+
+.table-scroll {
+	overflow-x: auto;
+}
+
 table {
 	width: 100%;
 	border-collapse: collapse;
