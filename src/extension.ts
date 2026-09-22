@@ -1,13 +1,15 @@
 import * as vscode from 'vscode';
+
 import { validateNachaCommand } from './commands/validateNacha';
+
 import { AchHoverProvider } from './language/hoverProvider';
+
 import {
 	AchSemanticTokensProvider,
 	achSemanticTokenLegend
 } from './language/semanticTokensProvider';
 
 export function activate(context: vscode.ExtensionContext): void {
-
 	const validateFileCommand = vscode.commands.registerCommand(
 		'nacha-validator-nc.validateFile',
 		() => validateNachaCommand(context)

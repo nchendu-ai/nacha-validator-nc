@@ -19,7 +19,6 @@ const INITIAL_ENTRY_LIMIT = 100;
 export function showValidationResults(
 	context: vscode.ExtensionContext,
 	fileName: string,
-	documentUri: vscode.Uri,
 	lengthResult: ValidationResult,
 	analysis: AchFileAnalysis,
 	issues: ValidationIssue[]
@@ -32,49 +31,6 @@ export function showValidationResults(
 		{
 			enableScripts: true
 		}
-	);
-
-	panel.webview.onDidReceiveMessage(
-		async message => {
-			if (message?.command !== 'goToLine') {
-				return;
-			}
-
-			const lineNumber = Number(message.lineNumber);
-
-			if (!Number.isInteger(lineNumber) || lineNumber < 1) {
-				return;
-			}
-
-			const document = await vscode.workspace.openTextDocument(
-				documentUri
-			);
-
-			const editor = await vscode.window.showTextDocument(
-				document,
-				vscode.ViewColumn.One,
-				false
-			);
-
-			const lineIndex = Math.min(
-				lineNumber - 1,
-				editor.document.lineCount - 1
-			);
-
-			const position = new vscode.Position(lineIndex, 0);
-
-			editor.selection = new vscode.Selection(
-				position,
-				position
-			);
-
-			editor.revealRange(
-				new vscode.Range(position, position),
-				vscode.TextEditorRevealType.InCenter
-			);
-		},
-		undefined,
-		context.subscriptions
 	);
 
 	const cssUri = panel.webview.asWebviewUri(
@@ -169,30 +125,7 @@ export function showValidationResults(
 
 			<script nonce="nachaValidator">
 
-				const vscode = acquireVsCodeApi();
-
-				function goToLine(lineNumber) {
-					vscode.postMessage({
-						command: 'goToLine',
-						lineNumber
-					});
-				}
-
 				const ENTRY_PAGE_SIZE = ${INITIAL_ENTRY_LIMIT};
-
-				document
-					.querySelectorAll('.line-link')
-					.forEach(button => {
-						button.addEventListener('click', () => {
-							const line = Number(
-								button.getAttribute('data-line')
-							);
-
-							if (Number.isInteger(line) && line > 0) {
-								goToLine(line);
-							}
-						});
-					});
 
 				const entries = ${JSON.stringify(
 					analysis.entries.map(entry => ({
@@ -616,7 +549,7 @@ function controls(
 	return `
 		<h2>${title}</h2>
 
-		<table class="reconciliation-table">
+		<table>
 
 			<thead>
 				<tr>
@@ -900,7 +833,7 @@ function entryExplorer(
 
 			<div class="table-scroll">
 
-				<table class="reconciliation-table">
+				<table>
 
 					<thead>
 
@@ -953,6 +886,7 @@ function entryExplorer(
 function issueList(
 	issues: ValidationIssue[]
 ): string {
+
 	if (issues.length === 0) {
 		return '';
 	}
@@ -960,27 +894,26 @@ function issueList(
 	return `
 		<h2>Validation Issues</h2>
 
-		<table class="validation-table">
+		<table>
+
 			<thead>
+
 				<tr>
 					<th>Severity</th>
-					<th>Line</th>
 					<th>Context</th>
 					<th>Message</th>
 					<th>Expected</th>
 					<th>Actual</th>
 				</tr>
+
 			</thead>
 
 			<tbody>
-				${issues.map(issue => {
-					const lineNumber =
-						typeof issue.lineNumber === 'number'
-							? issue.lineNumber
-							: undefined;
 
-					return `
+				${issues.map(
+					issue => `
 						<tr>
+
 							<td>
 								<span class="status-badge ${
 									issue.severity === 'error'
@@ -992,35 +925,20 @@ function issueList(
 							</td>
 
 							<td>
-								${
-									lineNumber !== undefined
-										? `
-											<button
-												type="button"
-												class="line-link"
-												data-line="${lineNumber}"
-												title="Go to line ${lineNumber}"
-											>
-												Line ${lineNumber}
-											</button>
-										`
-										: '—'
-								}
-							</td>
-
-							<td>
 								${escapeHtml(
 									issue.context ||
 									(
-										lineNumber !== undefined
-											? `Line ${lineNumber}`
+										issue.lineNumber
+											? `Line ${issue.lineNumber}`
 											: 'File'
 									)
 								)}
 							</td>
 
 							<td>
-								${escapeHtml(issue.message)}
+								${escapeHtml(
+									issue.message
+								)}
 							</td>
 
 							<td>
@@ -1028,7 +946,9 @@ function issueList(
 									issue.expected === undefined
 										? '—'
 										: escapeHtml(
-											String(issue.expected)
+											String(
+												issue.expected
+											)
 										)
 								}
 							</td>
@@ -1038,14 +958,19 @@ function issueList(
 									issue.actual === undefined
 										? '—'
 										: escapeHtml(
-											String(issue.actual)
+											String(
+												issue.actual
+											)
 										)
 								}
 							</td>
+
 						</tr>
-					`;
-				}).join('')}
+					`
+				).join('')}
+
 			</tbody>
+
 		</table>
 	`;
 }

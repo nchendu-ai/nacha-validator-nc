@@ -34,16 +34,31 @@ export function validateNachaCommand(
 	const controlIssues = [
 		...analysis.batches.flatMap(batch => batch.controlComparisons
 			.filter(comparison => !comparison.passed)
-			.map(comparison => ({ severity: 'error' as const, context: `Batch ${batch.batchNumber || '(unknown)'}`, message: `${comparison.label} mismatch.`, expected: comparison.calculated, actual: comparison.declared }))
+			.map(comparison => ({
+				severity: 'error' as const,
+				context: `Batch ${batch.batchNumber || '(unknown)'}`,
+				message: `${comparison.label} mismatch.`,
+				expected: comparison.calculated,
+				actual: comparison.declared,
+				lineNumber: comparison.lineNumber
+			}))
 		),
 		...analysis.fileControlComparisons
 			.filter(comparison => !comparison.passed)
-			.map(comparison => ({ severity: 'error' as const, context: 'File Control', message: `${comparison.label} mismatch.`, expected: comparison.calculated, actual: comparison.declared }))
+			.map(comparison => ({
+				severity: 'error' as const,
+				context: 'File Control',
+				message: `${comparison.label} mismatch.`,
+				expected: comparison.calculated,
+				actual: comparison.declared,
+				lineNumber: comparison.lineNumber
+			}))
 	];
 
 	showValidationResults(
 		context,
 		document.fileName,
+		document.uri,
 		validationResult,
 		analysis,
 		[...structureIssues, ...fieldIssues, ...controlIssues]

@@ -1,9 +1,9 @@
 {
-  "name": "nacha-validator-nc",
-  "displayName": "NACHA Validator",
+  "name": "nacha-validator",
+  "displayName": "NACHA File Validator",
   "publisher": "NChenduSoftware",
   "description": "Powerful NACHA file validation and analysis for Visual Studio Code. Analyze ACH file structure, batches, entries, financial totals, control totals, and validation issues with clear, actionable results.",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.137.0"
   },

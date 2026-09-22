@@ -94,6 +94,3 @@ npm run lint
 npm test
 ```
 
-## Version
-
-Current version: `0.0.1`. The version is intentionally unchanged while this enhancement is being verified.

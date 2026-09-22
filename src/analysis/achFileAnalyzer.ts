@@ -25,6 +25,7 @@ export interface ControlComparison {
 	declared: number | string;
 	passed: boolean;
 	monetary?: boolean;
+	lineNumber?: number;
 }
 
 export interface AchBatchAnalysis {
@@ -97,6 +98,7 @@ export function analyzeAchFile(lines: string[]): AchFileAnalysis {
 	let currentBatch: AchBatchAnalysis | undefined;
 	let lastEntry: AchEntryAnalysis | undefined;
 	let fileControl: string | undefined;
+	let fileControlLineNumber: number | undefined;
 	let addendaCount = 0;
 
 	for (let index = 0; index < lines.length; index++) {
@@ -176,44 +178,58 @@ export function analyzeAchFile(lines: string[]): AchFileAnalysis {
 				comparison(
 					'Entry/Addenda Count',
 					count,
-					numberValue(line, 5, 10)
+					numberValue(line, 5, 10),
+					false,
+					index + 1
 				),
 				comparison(
 					'Entry Hash',
 					currentBatch.entryHash,
-					numberValue(line, 11, 20)
+					numberValue(line, 11, 20),
+					false,
+					index + 1
 				),
 				comparison(
 					'Total Debit',
 					currentBatch.debitCents,
 					numberValue(line, 21, 32),
-					true
+					true,
+					index + 1
 				),
 				comparison(
 					'Total Credit',
 					currentBatch.creditCents,
 					numberValue(line, 33, 44),
-					true
+					true,
+					index + 1
 				),
 				comparison(
 					'Batch Number',
 					currentBatch.batchNumber,
-					value(line, 88, 94)
+					value(line, 88, 94),
+					false,
+					index + 1
 				),
 				comparison(
 					'Company Identification',
 					currentBatch.companyId,
-					value(line, 45, 54)
+					value(line, 45, 54),
+					false,
+					index + 1
 				),
 				comparison(
 					'Service Class',
 					currentBatch.serviceClass,
-					value(line, 2, 4)
+					value(line, 2, 4),
+					false,
+					index + 1
 				),
 				comparison(
 					'ODFI Identification',
 					currentBatch.odfiIdentification,
-					value(line, 80, 87)
+					value(line, 80, 87),
+					false,
+					index + 1
 				)
 			];
 
@@ -226,6 +242,7 @@ export function analyzeAchFile(lines: string[]): AchFileAnalysis {
 			!/^9+$/.test(line)
 		) {
 			fileControl = line;
+			fileControlLineNumber = index + 1;
 		}
 	}
 
@@ -256,34 +273,44 @@ export function analyzeAchFile(lines: string[]): AchFileAnalysis {
 			comparison(
 				'Batch Count',
 				batches.length,
-				numberValue(fileControl, 2, 7)
+				numberValue(fileControl, 2, 7),
+				false,
+				fileControlLineNumber
 			),
 			comparison(
 				'Block Count',
 				Math.ceil(lines.length / 10),
-				numberValue(fileControl, 8, 13)
+				numberValue(fileControl, 8, 13),
+				false,
+				fileControlLineNumber
 			),
 			comparison(
 				'Entry/Addenda Count',
 				entryAddendaCount,
-				numberValue(fileControl, 14, 21)
+				numberValue(fileControl, 14, 21),
+				false,
+				fileControlLineNumber
 			),
 			comparison(
 				'Entry Hash',
 				entryHash,
-				numberValue(fileControl, 22, 31)
+				numberValue(fileControl, 22, 31),
+				false,
+				fileControlLineNumber
 			),
 			comparison(
 				'Total Debit',
 				debitCents,
 				numberValue(fileControl, 32, 43),
-				true
+				true,
+				fileControlLineNumber
 			),
 			comparison(
 				'Total Credit',
 				creditCents,
 				numberValue(fileControl, 44, 55),
-				true
+				true,
+				fileControlLineNumber
 			)
 		]
 		: [];
@@ -304,13 +331,15 @@ function comparison(
 	label: string,
 	calculated: number | string,
 	declared: number | string,
-	monetary = false
+	monetary = false,
+	lineNumber?: number
 ): ControlComparison {
 	return {
 		label,
 		calculated,
 		declared,
 		passed: calculated === declared,
-		monetary
+		monetary,
+		lineNumber
 	};
 }
